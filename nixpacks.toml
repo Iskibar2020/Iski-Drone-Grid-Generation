@@ -1,9 +1,0 @@
-# nixpacks.toml
-
-# Specify dependencies explicitly for the setup phase
-[phases.setup]
-run = "pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir"
-
-# Start the application without activating a virtual environment
-[phases.start]
-run = "gunicorn app:app --bind 0.0.0.0:$PORT"
