@@ -31,8 +31,6 @@ def create_grid(extent, grid_size):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html')
 
 def upload():
     if request.method == 'POST':
