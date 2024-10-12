@@ -132,7 +132,7 @@ def upload():
         return redirect(url_for('upload'))
 
     # Load values from the session or set defaults for GET request
-    grid_size = session.get('grid_size', 1000)
+    grid_size = session.get('grid_size', 800)
     buffer_size = session.get('buffer_size', 0)
     grid_prefix = session.get('grid_prefix', 'Drone_Grid')
 
