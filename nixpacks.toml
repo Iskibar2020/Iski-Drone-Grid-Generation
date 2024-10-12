@@ -1,7 +1,9 @@
-# Setup phase to upgrade pip and install requirements
-[phases.setup]
-run = "python3 -m pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir"
+# nixpacks.toml
 
-# Start phase to run the app using Gunicorn
+# Specify dependencies explicitly for the setup phase
+[phases.setup]
+run = "pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir"
+
+# Start the application without activating a virtual environment
 [phases.start]
 run = "gunicorn app:app --bind 0.0.0.0:$PORT"
