@@ -44,12 +44,16 @@ def upload():
 
         kml_file = request.files['kml_file']
 
-        # Read the KML file
+        # Read the KML file with pyogrio
         gdf_e = gpd.read_file(kml_file)
 
         # Check if the KML file is loaded correctly
         if gdf_e.empty:
             return "KML file not loaded correctly. Check file path or data."
+
+        # Set the CRS if it is not already set
+        if gdf_e.crs is None:
+            gdf_e.set_crs("EPSG:4326", inplace=True)  # Assuming KML file uses WGS84
 
         # Reproject to UTM 46N if not already in UTM 46N
         if gdf_e.crs != "EPSG:32646":
@@ -100,7 +104,7 @@ def upload():
         kml_dir = tempfile.mkdtemp()
         kml_files = []
 
-        # Save each polygon as a separate KML file
+        # Save each polygon as a separate KML file using pyogrio
         for idx, geometry in enumerate(buffered_gdf.geometry):
             single_polygon_gdf = gpd.GeoDataFrame({'geometry': [geometry]}, crs="EPSG:32646")
             kml_file_name = f"{grid_prefix}_polygon_{idx}.kml"
@@ -207,4 +211,4 @@ def map_layers(filename):
     return send_from_directory('map_layers', filename)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True)
