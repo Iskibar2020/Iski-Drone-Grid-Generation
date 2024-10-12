@@ -45,7 +45,7 @@ def upload():
         kml_file = request.files['kml_file']
 
         # Read the KML file with pyogrio
-        gdf_e = gpd.read_file(kml_file)
+        gdf_e = pyogrio.read_dataframe(kml_file.stream, driver='KML')
 
         # Check if the KML file is loaded correctly
         if gdf_e.empty:
