@@ -8,6 +8,7 @@ import tempfile
 import shutil
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a strong secret key
 
 # Function to create a grid
 def create_grid(extent, grid_size):
@@ -28,10 +29,7 @@ def create_grid(extent, grid_size):
     # Create a GeoDataFrame from the grid polygons with UTM 46N CRS
     return gpd.GeoDataFrame({'geometry': grid_polygons}, crs="EPSG:32646")
 
-
-
 @app.route('/', methods=['GET', 'POST'])
-
 def upload():
     if request.method == 'POST':
         # Get the input values
@@ -149,6 +147,64 @@ def upload():
                            input_file_path=input_file_path, intersect_file_path=intersect_file_path,
                            buffer_file_path=buffer_file_path, success_message=success_message)
 
+
+@app.route('/download_grid/<grid_prefix>/<kml_file>')
+def download_grid(grid_prefix, kml_file):
+    kml_dir = session.get('kml_dir', "")
+    kml_file_path = os.path.join(kml_dir, kml_file)
+
+    if not os.path.exists(kml_file_path):
+        return abort(404, description="Grid polygon KML file not found.")
+
+    return send_file(kml_file_path, as_attachment=True)
+
+@app.route('/download_all')
+def download_all():
+    zip_file_path = session.get('zip_file_path')
+    
+    if not zip_file_path or not os.path.exists(zip_file_path):
+        return abort(404, description="ZIP file not found.")
+    
+    return send_file(zip_file_path, as_attachment=True)
+
+@app.route('/download_input_geojson')
+def download_input_geojson():
+    input_file_path = session.get('input_file_path')
+    if not input_file_path or not os.path.exists(input_file_path):
+        return abort(404, description="Input GeoJSON file not found.")
+    return send_file(input_file_path, as_attachment=True, download_name='Input_File.geojson')
+
+# Route to download the Intersect File GeoJSON
+@app.route('/download_intersect_geojson')
+def download_intersect_geojson():
+    intersect_file_path = session.get('intersect_file_path')
+    if not intersect_file_path or not os.path.exists(intersect_file_path):
+        return abort(404, description="Intersect GeoJSON file not found.")
+    return send_file(intersect_file_path, as_attachment=True, download_name='Grid_Intersect.geojson')
+
+# Route to download the Buffer File GeoJSON
+@app.route('/download_buffer_geojson')
+def download_buffer_geojson():
+    buffer_file_path = session.get('buffer_file_path')
+    if not buffer_file_path or not os.path.exists(buffer_file_path):
+        return abort(404, description="Buffer GeoJSON file not found.")
+    return send_file(buffer_file_path, as_attachment=True, download_name='Grid_Buffer.geojson')
+
+@app.route('/reset')
+def reset():
+    kml_dir = session.get('kml_dir', None)
+    
+    # Clear session and delete temporary directory
+    session.clear()
+    if kml_dir and os.path.exists(kml_dir):
+        shutil.rmtree(kml_dir)
+    
+    return redirect(url_for('upload'))
+
+# Route to serve files from map_layers directory
+@app.route('/map_layers/<path:filename>')
+def map_layers(filename):
+    return send_from_directory('map_layers', filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
