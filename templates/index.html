@@ -103,7 +103,7 @@
             <button type="submit" id="uploadBtn">Generate Grid Files</button>
         </form>
         {% if success_message %}
-        <button id="show-layers-btn" style="display:block;">Show Layers in the Map</button>
+        <button id="show-layers-btn" style="display:none;">Show Layers in the Map</button>
         {% else %}
         <button id="show-layers-btn" style="display:none;">Show Layers in the Map</button>
         {% endif %}
@@ -174,6 +174,11 @@
             // loadGeoJsonLayer('map_layers/Input_File.geojson');
         });
 
+        // Automatically click the button if the success message is present
+        if (showLayersBtn && `{{ success_message | tojson }}`) {
+            showLayersBtn.click();
+        }
+
         // Function to load a GeoJSON file and add it to the map
         function loadGeoJsonLayer(url) {
             fetch(url)
@@ -201,7 +206,11 @@
                     // Add the layer to the map and the array
                     layer.addTo(map);
                     geoJsonLayers.push(layer); // Store the layer for future reference
+
+                    // Fit map to bounds of the layer
+                    map.fitBounds(layer.getBounds());
                 })
+
                 .catch(error => console.error('Error loading GeoJSON:', error));
         }
 

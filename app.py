@@ -29,6 +29,8 @@ def create_grid(extent, grid_size):
     # Create a GeoDataFrame from the grid polygons with UTM 46N CRS
     return gpd.GeoDataFrame({'geometry': grid_polygons}, crs="EPSG:32646")
 
+
+
 @app.route('/', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
