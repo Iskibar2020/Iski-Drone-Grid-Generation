@@ -1,0 +1,72 @@
+.hidden {
+  display: none;
+}
+
+.leaflet-control-basemapsSwitcher {
+  height: auto;
+  width: auto;
+  display: flex;
+}
+
+.leaflet-control-basemapsSwitcher:hover {
+  cursor: pointer;
+}
+
+.basemapImg {
+  box-shadow: 2px 2px 5px rgb(0 0 0 / 65%);
+  background-color: #fff;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 3px 3px;
+  border: solid 1px #6a6a6a;
+}
+
+.basemapImg div {
+  background-size: 70px 70px;
+  width: 95px;
+  height: 80px;
+  border-radius: 3px 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  color: #6a6a6a;
+  font-size: 0.7rem;
+}
+
+.basemapImg div .name {
+  width: 100%;
+  height: auto;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 0;
+  color: black;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  padding: 1px;
+}
+
+.basemapImg div .check {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  display: flex;
+  align-items: flex-end;
+  font-weight: 500;
+  padding: 1px;
+  content: "";
+}
+
+.activeMap::before {
+  color: white;
+  content: "✔";
+  width: 18px;
+  height: 18px;
+  background-color: #ff385c;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

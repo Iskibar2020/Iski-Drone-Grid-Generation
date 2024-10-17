@@ -1,0 +1,189 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
+/* Theme colors */
+:root {
+  --background-color: #ffffff;
+  --text-color: #6a6a6a;
+  --header-footer-color: #ffffff;
+  --header-footer-text-color: #333;
+  --border-color: #a3a3a3;
+  --button-bg-color: #a3a3a3;
+  --button-hover-bg-color: #ffffff;
+  --button-hover-text-color: black;
+  --sidebar-border-color: #ff385c;
+  --map-border-color: #ffffff;
+  --link-color: #ff385c;
+  --box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  height: 100vh;
+  font-weight: 600;
+  font-style: normal;
+  color: var(--text-color);
+}
+
+.main-body {
+  padding-top: 10px;
+  height: 85vh;
+  width: 100%;
+}
+
+.header,
+footer {
+  width: 100%;
+  background-color: var(--header-footer-color);
+  color: var(--header-footer-text-color);
+  text-align: center;
+  height: 10vh;
+  box-shadow: var(--box-shadow);
+  border-radius: 0 0 12px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+footer {
+  height: 5vh;
+  border-top: 1px solid var(--border-color);
+  border-radius: 12px 12px 0 0;
+}
+
+.header p,
+footer p {
+  font-size: small;
+  font-weight: 300;
+}
+
+.flex-container {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 12%;
+  padding: 20px;
+  background-color: var(--background-color);
+  overflow-y: auto;
+  height: 78vh;
+  border-radius: 12px;
+  margin: 0 5px 0 20px;
+  box-shadow: var(--box-shadow);
+  border: solid 1px var(--sidebar-border-color);
+}
+
+#map {
+  width: 83%;
+  height: 82vh;
+  margin-left: 5px;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  border: solid 1px var(--map-border-color);
+}
+
+h1,
+h2 {
+  color: var(--header-footer-text-color);
+}
+
+form,
+ul {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+input[type="file"],
+input[type="number"],
+input[type="text"],
+button {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  border: solid 0.05rem var(--text-color);
+  border-radius: 6px;
+}
+
+button {
+  background-color: var(--button-bg-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+  border: solid 1px var(--button-bg-color);
+  color: var(--button-hover-text-color);
+}
+
+ul {
+  list-style-type: none;
+  text-align: left;
+  padding-left: 0;
+}
+
+li a {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 200;
+  font-size: 0.9rem;
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+/* Leaflet styles */
+a.leaflet-control-zoom-in,
+a.leaflet-control-zoom-out,
+a.leaflet-control-fullscreen-button,
+a.leaflet-draw-draw-polyline,
+a.leaflet-draw-draw-polygon,
+a.leaflet-draw-draw-rectangle,
+a.leaflet-draw-draw-circle,
+a.leaflet-draw-draw-marker,
+a.leaflet-draw-edit-edit,
+.leaflet-bar a.leaflet-disabled,
+a.leaflet-measure-toggle,
+.leaflet-control-measure,
+.leaflet-control-geocoder,
+.leaflet-control-geocoder-icon,
+.basemapImg {
+  background-color: var(--background-color);
+  box-shadow: var(--box-shadow);
+  border: solid 1px var(--sidebar-border-color);
+}
+
+.leaflet-control-layers-selector {
+  accent-color: var(--sidebar-border-color);
+}
+
+.leaflet-control-layers-overlays label {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.leaflet-routing-alternatives-container {
+  display: none;
+}
+
+.leaflet-routing-container {
+  width: 110px;
+}
+
+.leaflet-touch .leaflet-control-geocoder {
+  height: 30px;
+}

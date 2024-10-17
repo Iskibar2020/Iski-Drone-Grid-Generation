@@ -4,225 +4,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Upload KML and Generate Grids</title>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
-    <style>
-        /* Basic layout styles */
-        body {
-            display: flex;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            height: 100vh;
-        }
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
+    <link rel="stylesheet"
+        href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
 
-        /* Sidebar styles */
-        .sidebar {
-            width: 30%;
-            padding: 20px;
-            background-color: #f4f4f4;
-            overflow-y: auto;
-        }
-
-        /* Map styles */
-        #map {
-            width: 70%;
-            height: 100vh;
-        }
-
-        h1,
-        h2 {
-            color: #333;
-        }
-
-        form,
-        ul {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        input[type="file"],
-        input[type="number"],
-        input[type="text"],
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #showLayersBtn {
-            display: none;
-            /* Hidden by default */
-        }
-    </style>
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.measure.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/L.switchBasemap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <div class="sidebar">
-        <h1>Upload KML and Generate Grids</h1>
-        {% if kml_files %}
-        <form action="{{ url_for('reset') }}" method="get">
-            <button type="submit">Reset</button>
-        </form>
-        {% endif %}
-        {% if success_message %}
-        <p>{{ success_message }}</p>
-        {% endif %}
-        <form id="uploadForm" method="post" enctype="multipart/form-data" action="/">
-            <label for="kml_file">KML File:</label>
-            <input type="file" name="kml_file" id="kml_file" required>
-            <br>
+    <!-- Header -->
+    <header class="header">
+        <h2>Quick Drone Flight Grid Generator</h2>
+        <p>Designed for drone pilots with no GIS knowledge required. Simply upload your KML file and generate tailored
+            grids for your drone routes in just a few clicks.
+        </p>
 
-            <label for="grid_size">Grid Size (m):</label>
-            <input type="number" name="grid_size" id="grid_size" value="{{ grid_size }}" required>
-            <br>
+    </header>
 
-            <label for="buffer_size">Buffer Size (m):</label>
-            <input type="number" name="buffer_size" id="buffer_size" value="{{ buffer_size }}" required>
-            <br>
+    <main class="main-body flex-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            {% if kml_files %}
+            <form action="{{ url_for('reset') }}" method="get">
+                <button type="submit">Reset</button>
+            </form>
+            {% endif %}
 
-            <label for="grid_prefix">Grid Prefix:</label>
-            <input type="text" name="grid_prefix" id="grid_prefix" value="{{ grid_prefix }}" required>
-            <br>
+            {% if success_message %}
+            <p>{{ success_message }}</p>
+            {% endif %}
 
-            <button type="submit" id="uploadBtn">Generate Grid Files</button>
-        </form>
-        {% if success_message %}
-        <button id="show-layers-btn" style="display:none;">Show Layers in the Map</button>
-        {% else %}
-        <button id="show-layers-btn" style="display:none;">Show Layers in the Map</button>
-        {% endif %}
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/">
+                <label for="kml_file">KML File:</label>
+                <input type="file" name="kml_file" id="kml_file" required>
 
-        {% if kml_files %}
-        <!-- <h2>Download Individual Grids</h2>
-        <ul>
-            {% for kml_file in kml_files %}
-            <li><a href="{{ url_for('download_grid', grid_prefix=grid_prefix, kml_file=kml_file) }}">{{ kml_file }}</a>
-            </li>
-            {% endfor %}
-        </ul> -->
+                <label for="grid_width">Grid Width (m):</label>
+                <input type="number" name="grid_width" id="grid_width" value="{{ grid_width }}" required>
 
-        <h2>Download All Grids as ZIP</h2>
-        <li><a href="{{ url_for('download_input_geojson') }}">Download Input File (GeoJSON)</a></li>
-        <li><a href="{{ url_for('download_intersect_geojson') }}">Download Grid Intersect (GeoJSON)</a></li>
-        <li><a href="{{ url_for('download_buffer_geojson') }}">Download Grid Buffer (GeoJSON)</a></li>
-        <li><a href="{{ url_for('download_all') }}">Download ZIP</a></li>
-        <!-- <a href="{{ url_for('download_all') }}">Download ZIP</a> -->
-        {% endif %}
+                <label for="grid_height">Grid Height (m):</label>
+                <input type="number" name="grid_height" id="grid_height" value="{{ grid_height }}" required>
 
-    </div>
+                <label for="buffer_size">Buffer Size (m):</label>
+                <input type="number" name="buffer_size" id="buffer_size" value="{{ buffer_size }}" required>
 
-    <div id="map"></div>
+                <label for="grid_prefix">Grid Prefix:</label>
+                <input type="text" name="grid_prefix" id="grid_prefix" value="{{ grid_prefix }}" required>
 
+                <button type="submit" id="uploadBtn">Generate Grid Files</button>
+                <button id="saveBtn">Save Polygon</button>
+            </form>
+
+            <button id="show-layers-btn" style="display:none;">Show Layers in the Map</button>
+
+            {% if kml_files %}
+            <hr>
+            <p>Downloads (GeoJSON):</p>
+            <ul>
+                <li><a href="{{ url_for('download_input_geojson') }}">1. Input Grid</a></li>
+                <li><a href="{{ url_for('download_intersect_geojson') }}">2. Grid (Without Buffer)</a></li>
+                <li><a href="{{ url_for('download_buffer_geojson') }}">3. Final Grid (With Buffer)</a></li>
+                <li><a href="{{ url_for('download_all') }}">4. Download All Grids as ZIP</a></li>
+            </ul>
+            {% endif %}
+        </aside>
+
+        <!-- Map -->
+        <section id="map"></section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 All rights reserved by <a href="https://www.linkedin.com/in/m-mashrur-zaman-7b3abb155/">M.
+                Mashrur Zaman</a> (GIS Developer & 3D Visualizer) <a href="mailto:your-email@gmail.com" title="Email"
+                style="text-decoration: none; margin: 0 10px;">
+                <i class="fas fa-regular fa-envelope" style="color: #cd3a2f; font-size: small;" aria-hidden="true"></i>
+            </a>
+            <a href="https://wa.me/+8801762672809" title="WhatsApp" style="text-decoration: none; margin: 0 10px;">
+                <i class="fab fa-whatsapp" style="color: #25D366; font-size: small;" aria-hidden="true"></i>
+            </a>
+        </p>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.1/proj4leaflet.js"></script>
-    <script>
-        // Initialize the map
-        var map = L.map('map').setView([0, 0], 2); // Center on a neutral location, can be adjusted
-
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        let uploadBtn = document.getElementById('uploadBtn');
-        let showLayersBtn = document.getElementById('show-layers-btn');
-        let geoLayer = null;
-
-        // If the success message div is present, unhide the button
-        if (document.getElementById("successMessage")) {
-            document.getElementById("showLayersBtn").style.display = "block";
-        }
-
-        // Define the EPSG:32646 projection
-        var utm46N = new L.Proj.CRS('EPSG:32646',
-            '+proj=utm +zone=46 +datum=WGS84 +units=m +no_defs', {
-            resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5]
-        });
-
-        // Create an array to hold the layers
-        let geoJsonLayers = [];
-
-        // Add event listener for the Show Layers button
-        showLayersBtn.addEventListener('click', function () {
-            // Clear any existing layers from the map
-            geoJsonLayers.forEach(layer => {
-                map.removeLayer(layer);
-            });
-            geoJsonLayers = []; // Reset the layers array
-
-            loadGeoJsonLayer('map_layers/Grid_Buffer.geojson');
-            // Uncomment below if you want to load other layers
-            // loadGeoJsonLayer('map_layers/Grid_Intersect.geojson');
-            // loadGeoJsonLayer('map_layers/Input_File.geojson');
-        });
-
-        // Automatically click the button if the success message is present
-        if (showLayersBtn && `{{ success_message | tojson }}`) {
-            showLayersBtn.click();
-        }
-
-        // Function to load a GeoJSON file and add it to the map
-        function loadGeoJsonLayer(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // Create a new GeoJSON layer
-                    let layer = L.Proj.geoJson(data, {
-                        onEachFeature: function (feature, layer) {
-                            let urlParts = feature.properties.download_link.split('/');
-                            let kmlFileName = urlParts[urlParts.length - 1]; // Get the last part of the URL
-                            let displayName = kmlFileName.replace('.kml', '').replace(/_/g, ' '); // Remove .kml and replace _ with space
-                            // You can add popups or styles here if needed
-                            let popupContent = feature.properties.name || `<h3>${displayName}</h3>`; // Display the feature name
-                            // Check if download_link is defined in properties
-                            if (feature.properties.download_link) {
-                                // Extract the KML file name from the download link
-                                popupContent += `
-                                    <br><a href="${feature.properties.download_link}" target="_blank" rel="noopener noreferrer" class="download-link">Download KML</a>
-                                `;
-                            }
-                            layer.bindPopup(popupContent);
-                        }
-                    });
-
-                    // Add the layer to the map and the array
-                    layer.addTo(map);
-                    geoJsonLayers.push(layer); // Store the layer for future reference
-
-                    // Fit map to bounds of the layer
-                    map.fitBounds(layer.getBounds());
-                })
-
-                .catch(error => console.error('Error loading GeoJSON:', error));
-        }
-
-        // Prevent default behavior for download links
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('download-link')) {
-                e.preventDefault(); // Prevent default action
-                // Open the link in a new tab
-                window.open(e.target.href, '_blank');
-            }
-        });
-    </script>
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+    <script src="{{ url_for('static', filename='js/leaflet.measure.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/L.switchBasemap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>
