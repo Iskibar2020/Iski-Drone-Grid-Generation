@@ -80,6 +80,7 @@ showLayersBtn.addEventListener("click", function () {
   geoJsonLayers.forEach((layer) => {
     map.removeLayer(layer);
   });
+  //Hello
   geoJsonLayers = []; // Reset the layers array
   overlayMaps = {}; // Reset overlayMaps
 
